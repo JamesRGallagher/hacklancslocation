@@ -205,7 +205,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
             
             HSSearch.init();
         }
-		
+        
         
         $scope.nearMe = function() {
             if(!$scope.map) {
@@ -214,8 +214,8 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
 
             navigator.geolocation.getCurrentPosition(function(pos) {
                // $scope.map.setView([pos.coords.latitude, pos.coords.longitude], 9);
-                alert(pos.coords.latitude);
-                alert(pos.coords.longitude);
+                //alert(pos.coords.latitude);
+                //alert(pos.coords.longitude);
 
                 for(i=0;i<$scope.events.length;i++){
                    
