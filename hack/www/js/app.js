@@ -54,7 +54,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
     .controller('MainCtrl', function($scope,$http) {
       var responsePromise = $http.get("https://hacklancaster.herokuapp.com/events")
           .success(function(data, status, headers, config) {
-            $scope.events = data.events;
+           
 
             console.log(data.events);
         })
@@ -109,6 +109,8 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
     })
 
     .controller('MapCtrl', function($scope, $ionicLoading,$rootScope,$location,$http) {
+        $scope.whereubin = [];
+         
 
         $scope.leftButtons = [{
             type: 'button-icon icon ion-search',
@@ -237,8 +239,9 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
                     console.log(Math.abs(placeLong-myLong).toFixed(3))
                     if(Math.abs(placeLong-myLong)<=0.0001 && Math.abs(placeLat-myLat)<=0.0001 ){
 
-                           
+                            
                             sweetAlert("Good Job!", "Found "+ $scope.geo.features[i].properties.title +"!", "Success");
+                            $scope.whereubin.push($scope.geo.features[i].properties.title)
                             $http.post('https://hacklancaster.herokuapp.com/nearby/'+$scope.geo.features[i].id)
                     }
 
