@@ -110,7 +110,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
 
     .controller('MapCtrl', function($scope, $ionicLoading,$rootScope,$location,$http) {
         $scope.whereubin = [];
-         
+
 
         $scope.leftButtons = [{
             type: 'button-icon icon ion-search',
@@ -127,7 +127,6 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
 
         $scope.initializeMap =  function() {
        //    sweetAlert("Good Job!", "You startted the app!", "Success");
-
 
             $http.get('https://hacklancaster.herokuapp.com/catogories/' + $location.search().period).success(function(geo) {
 
