@@ -74,7 +74,7 @@ $ionicPlatform.ready(function() {
       alert(lat,long)
     }, function(err) {
       // error
-      alert(err)
+      alert("err")
     });
 
   
@@ -82,7 +82,7 @@ $ionicPlatform.ready(function() {
   var watch = $cordovaGeolocation.watchPosition(options);
   watch.promise.then(function()  { /* Not  used */ },
     function(err) {
-        alert(err)
+        alert("err")
       // error
     }, function(position) {
 
