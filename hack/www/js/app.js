@@ -55,7 +55,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
       var responsePromise = $http.get("https://hacklancaster.herokuapp.com/events")
           .success(function(data, status, headers, config) {
            
-
+            $scope.events = data.events;
             console.log(data.events);
         })
 
