@@ -124,7 +124,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
         }];
 
         $scope.initializeMap =  function() {
-            sweetAlert("Good Job!", "You startted the app!", "Success");
+       //    sweetAlert("Good Job!", "You startted the app!", "Success");
 
 
             $http.get('https://hacklancaster.herokuapp.com/catogories/' + $location.search().period).success(function(geo) {
@@ -236,8 +236,10 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
                     //console.log(placeLong + "-" + myLong)
                     console.log(Math.abs(placeLong-myLong).toFixed(3))
                     if(Math.abs(placeLong-myLong)<=0.0001 && Math.abs(placeLat-myLat)<=0.0001 ){
+
                            
                             sweetAlert("Good Job!", "Found "+ $scope.geo.features[i].properties.title +"!", "Success");
+                            $http.post('https://hacklancaster.herokuapp.com/nearby/'+$scope.geo.features[i].id)
                     }
 
                     
