@@ -48,7 +48,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
                 }
             })
 
-        $urlRouterProvider.otherwise("/event/start");
+        $urlRouterProvider.otherwise("/event/home");
     })
 
     .controller('MainCtrl', function($scope,$http) {
@@ -109,10 +109,11 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
     })
 
     .controller('MapCtrl', function($scope, $ionicLoading,$rootScope,$location,$http) {
+        
         $scope.whereubin = [];
 
 
-        $scope.leftButtons = [{
+       /* $scope.leftButtons = [{
             type: 'button-icon icon ion-search',
             tap: function(e) {
                 $scope.sideMenuController.toggleLeft();
@@ -123,7 +124,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
             tap: function(e) {
                 $scope.sideMenuController.toggleRight();
             }
-        }];
+        }];*/
 
         $scope.initializeMap =  function() {
        //    sweetAlert("Good Job!", "You startted the app!", "Success");
@@ -236,12 +237,14 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
 
                     //console.log(placeLong + "-" + myLong)
                     console.log(Math.abs(placeLong-myLong).toFixed(3))
-                    if(Math.abs(placeLong-myLong)<=0.0001 && Math.abs(placeLat-myLat)<=0.0001 ){
+                    if(Math.abs(placeLong-myLong)<=1.0001 && Math.abs(placeLat-myLat)<=1.0001 ){
 
                             
-                            sweetAlert("Good Job!", "Found "+ $scope.geo.features[i].properties.title +"!", "Success");
-                            $scope.whereubin.push($scope.geo.features[i].properties.title)
-                            $http.post('https://hacklancaster.herokuapp.com/nearby/'+$scope.geo.features[i].id)
+                            sweetAlert("Good Job!", "Found "+ $scope.geo.features[i].properties.title +"!", "success");
+                            $scope.whereubin.push($scope.geo.features[i].properties.title);
+                            $scope.$apply();
+                            console.log($scope.whereubin)
+                            $http.get('https://hacklancaster.herokuapp.com/nearby/'+$scope.geo.features[i].id)
                     }
 
                     
