@@ -167,30 +167,36 @@ angular.module('hs.mapbox', ['ionic', 'ionic.service.platform', 'ionic.ui.conten
         });
         $scope.map = map;
 
-        // var controller = new Leap.Controller();
+        $scope.controller = new Leap.Controller();
 
-        //            controller.connect();
+        $scope.controller.connect();
 
-        //          controller.on('frame', onFrame);
+        $scope.controller.on('frame', onFrame);
 
-        //        $scope.hand = {'new': [0, 0]};
-        function onFrame(frame) {
+        function onFrame(frame)
+        {
+            $scope.map.setZoom(16);
 
-            //look at change in hand position
+            if(frame.hands.length > 0) {
 
-            if (frame.hands.length == 1) {
-                $scope.hand.old = $scope.hand.new;
+                var hand = frame.hands[0];
+                var position = hand.palmPosition;
+                var velocity = hand.palmVelocity;
 
-                $scope.hand.new = frame.hands[0];
+                console.log(velocity);
 
-                console.log(map);
+                var panFactor = 0.2;
+                var grabThreshold = 0.9;
 
-                $scope.map.setView([
-                        map.getCenter()[0] - ($scope.hand.new.palmPosition[0] - $scope.hand.old.palmPosition[0]),
-                        map.getCenter()[1] - ($scope.hand.new.palmPosition[1] - $scope.hand.old.palmPosition[1])
-                    ],
-                    9);
-            }
+                if (hand.grabStrength > grabThreshold) {
+                    $scope.map.panBy([-velocity[0]*panFactor, velocity[1]*panFactor], {
+                        'animate': false,
+                        'duration': 0, 
+                        'easyLinearity': 0,     
+                        'noMoveStart': false 
+                    });
+                }
+            } 
         }
        
         setInterval(function() {
