@@ -1,280 +1,254 @@
 /**
  * Created by aetdeveloper on 29/11/14.
  */
-angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content', 'ionic.ui.list', 'ionic.service.loading'])
+angular.module('hs.mapbox', ['ionic', 'ionic.service.platform', 'ionic.ui.content', 'ionic.ui.list', 'ionic.service.loading'])
 
-    .config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider) {
 
-        $stateProvider
-            .state('eventmenu', {
-                url: "/event",
-                abstract: true,
-                templateUrl: "event-menu.html"
-            })
-            .state('eventmenu.home', {
-                url: "/home",
-                views: {
-                    'menuContent': {
-                        templateUrl: "home.html",
-                        controller: "MapCtrl"
-                    }
+    $stateProvider
+        .state('eventmenu', {
+            url: "/event",
+            abstract: true,
+            templateUrl: "event-menu.html"
+        })
+        .state('eventmenu.home', {
+            url: "/home",
+            views: {
+                'menuContent': {
+                    templateUrl: "home.html",
+                    controller: "MapCtrl"
                 }
-            })
-            .state('eventmenu.info', {
-                url: "/info",
-                views: {
-                    'menuContent': {
-                        templateUrl: "info.html",
-                        controller: "InfoCtrl"
-                    }
+            }
+        })
+        .state('eventmenu.info', {
+            url: "/info",
+            views: {
+                'menuContent': {
+                    templateUrl: "info.html",
+                    controller: "InfoCtrl"
                 }
-            })
-            .state('eventmenu.start', {
-                url: "/start",
-                views: {
-                    'menuContent': {
-                        templateUrl: "start.html",
-                        controller: "StartCtrl"
-                    }
+            }
+        })
+        .state('eventmenu.start', {
+            url: "/start",
+            views: {
+                'menuContent': {
+                    templateUrl: "start.html",
+                    controller: "StartCtrl"
                 }
-            })
-            .state('eventmenu.present', {
-                url: "/present",
-                views: {
-                    'menuContent': {
-                        templateUrl: "present.html",
-                        controller: "PresentCtrl"
-                    }
+            }
+        })
+        .state('eventmenu.present', {
+            url: "/present",
+            views: {
+                'menuContent': {
+                    templateUrl: "present.html",
+                    controller: "PresentCtrl"
                 }
-            })
+            }
+        })
 
-        $urlRouterProvider.otherwise("/event/home");
-    })
+    $urlRouterProvider.otherwise("/event/home");
+})
 
-    .controller('MainCtrl', function($scope,$http) {
-      var responsePromise = $http.get("https://hacklancaster.herokuapp.com/events")
-          .success(function(data, status, headers, config) {
-           
+.controller('MainCtrl', function($scope, $http) {
+    var responsePromise = $http.get("https://hacklancaster.herokuapp.com/events")
+        .success(function(data, status, headers, config) {
+
             $scope.events = data.events;
             console.log(data.events);
         })
 
-    })
+})
 
-    .controller('InfoCtrl', function($scope) {
+.controller('InfoCtrl', function($scope) {
 
-        $scope.leftButtons = [{
-            type: 'button-icon icon ion-search',
-            tap: function(e) {
-                $scope.sideMenuController.toggleLeft();
-            }
-        }];
-        $scope.rightButtons = [{
-            type: 'button-icon icon ion-navicon',
-            tap: function(e) {
-                $scope.sideMenuController.toggleRight();
-            }
-        }];
-    })
+    $scope.leftButtons = [{
+        type: 'button-icon icon ion-search',
+        tap: function(e) {
+            $scope.sideMenuController.toggleLeft();
+        }
+    }];
+    $scope.rightButtons = [{
+        type: 'button-icon icon ion-navicon',
+        tap: function(e) {
+            $scope.sideMenuController.toggleRight();
+        }
+    }];
+})
 
-    .controller('StartCtrl', function($scope, $http, $location) {
-        $scope.leftButtons = [{
-            type: 'button-icon icon ion-search',
-            tap: function(e) {
-                $scope.sideMenuController.toggleLeft();
-            }
-        }];
-        
-        $scope.rightButtons = [{
-            type: 'button-icon icon ion-navicon',
-            tap: function(e) {
-                $scope.sideMenuController.toggleRight();
-            }
-        }];
+.controller('StartCtrl', function($scope, $http, $location) {
+    $scope.leftButtons = [{
+        type: 'button-icon icon ion-search',
+        tap: function(e) {
+            $scope.sideMenuController.toggleLeft();
+        }
+    }];
 
-        var responsePromise = $http.get("https://hacklancaster.herokuapp.com/catogories")
-          .success(function(data, status, headers, config) {
+    $scope.rightButtons = [{
+        type: 'button-icon icon ion-navicon',
+        tap: function(e) {
+            $scope.sideMenuController.toggleRight();
+        }
+    }];
+
+    var responsePromise = $http.get("https://hacklancaster.herokuapp.com/catogories")
+        .success(function(data, status, headers, config) {
             $scope.periods = data.catogories;
 
-            
+
             console.log(data);
         })
 
-        $scope.chooseCat = function(chosenPeriod) {
+    $scope.chooseCat = function(chosenPeriod) {
 
-            $location.path('event/home') + $location.search('period', chosenPeriod);
+        $location.path('event/home') + $location.search('period', chosenPeriod);
 
-        }
+    }
 
-    })
+})
 
-    .controller('MapCtrl', function($scope, $ionicLoading,$rootScope,$location,$http) {
-         $scope.updateMap =function (period){
+.controller('MapCtrl', function($scope, $rootScope, $location, $http, $ionicLoading) {
+    $scope.show = function() {
+        console.log($ionicLoading)
+        $ionicLoading.show({
+            template: 'Loading...'
+        });
+    };
+    $scope.hide = function() {
+        $ionicLoading.hide();
+    };
+    //document.getElementByClassName('mapbox-control-info-right').remove;
 
-                $http.get('https://hacklancaster.herokuapp.com/catogories/' + period).success(function(geo) {
-                    $scope.featureLayer.clearLayers();
-                    console.log(geo)
-                    console.log($scope.featureLayer)
-                    $scope.featureLayer.setGeoJSON(geo);
+    $scope.updateMap = function(period) {
 
+        //$scope.show()
+        if (localStorage.getItem(period)) {
+            console.log(localStorage.getItem(period))
+            $scope.featureLayer.clearLayers();
+            $scope.featureLayer.setGeoJSON(JSON.parse(localStorage.getItem(period)));
 
-                });
-            }
-        
-        $scope.whereubin = [];
-
-
-       /* $scope.leftButtons = [{
-            type: 'button-icon icon ion-search',
-            tap: function(e) {
-                $scope.sideMenuController.toggleLeft();
-            }
-        }];
-        $scope.rightButtons = [{
-            type: 'button-icon icon ion-navicon',
-            tap: function(e) {
-                $scope.sideMenuController.toggleRight();
-            }
-        }];*/
-
-        $scope.initializeMap =  function(period) {
-            //alert('init')
-            console.log(period)
-       //    sweetAlert("Good Job!", "You startted the app!", "Success");
-
+        } else {
             $http.get('https://hacklancaster.herokuapp.com/catogories/' + period).success(function(geo) {
-
-                $scope.geo = geo;
-                var map = L.mapbox.map('map', mapStyle).setView([54.0498942, -2.8055977], 15)
-                $scope.map = map;
-                
-                console.log(geo);
-
-                 $scope.featureLayer = L.mapbox.featureLayer()
-                    .addTo(map);
-
-                featureLayer.on('layeradd', function(e) {
-                    var marker = e.layer,
-                        feature = marker.feature;
-
-                    if (!angular.isUndefined(marker)) {
-
-                        marker.setIcon(L.icon(feature.properties.icon));
-                    
-                    }
-                });
-
-                featureLayer.setGeoJSON(geo);
-
-                featureLayer.eachLayer(function(layer) {
-
-                    // here you call `bindPopup` with a string of HTML you create - the feature
-                    // properties declared above are available under `layer.feature.properties`
-                    if (layer.feature.id && !angular.isUndefined(layer.features)) {
-                        var content = '<h2>'+layer.features.properties.title+'<\/h2>'+'<br><div style="font-size:10px">'+feature.properties.description+'</div>'
-                    layer.bindPopup(content);
-                }
-            });
-
-
-           });
-            // Stop the side bar from dragging when mousedown/tapdown on the map
-            L.DomEvent.addListener(document.getElementById('map'), 'mousedown', function(e) {
-                e.preventDefault();
-                return false;
-            });
-
-            $scope.map = map;
-
-           // var controller = new Leap.Controller();
-
-//            controller.connect();
-
-  //          controller.on('frame', onFrame);
-
-    //        $scope.hand = {'new': [0, 0]};
-
-
-
-            function onFrame(frame)
-            {
-
-                //look at change in hand position
-
-                if(frame.hands.length == 1) {
-                    $scope.hand.old = $scope.hand.new;
-
-                    $scope.hand.new = frame.hands[0];
-
-                    console.log(map);
-
-                    $scope.map.setView([
-                        map.getCenter()[0] - ($scope.hand.new.palmPosition[0] - $scope.hand.old.palmPosition[0]), 
-                        map.getCenter()[1] - ($scope.hand.new.palmPosition[1] - $scope.hand.old.palmPosition[1])], 
-                    9);
-                    
-                }
-                
-            }
-
-            setInterval(function(){
-                // method to be executed;
-                $scope.nearMe()
-            },1500);
-
-            
-            HSSearch.init();
+                $scope.featureLayer.clearLayers();
+                console.log(geo)
+                console.log($scope.featureLayer)
+                $scope.featureLayer.setGeoJSON(geo);
+                localStorage.setItem(period, JSON.stringify(geo));
+                // $scope.hide()
+            })
         }
-        
-        
-        $scope.nearMe = function() {
-            if(!$scope.map) {
-                return;
+    }
+
+    $scope.whereubin = [];
+
+
+    /* $scope.leftButtons = [{
+         type: 'button-icon icon ion-search',
+         tap: function(e) {
+             $scope.sideMenuController.toggleLeft();
+         }
+     }];
+     $scope.rightButtons = [{
+         type: 'button-icon icon ion-navicon',
+         tap: function(e) {
+             $scope.sideMenuController.toggleRight();
+         }
+     }];*/
+
+    $scope.initializeMap = function(period) {
+        var map = L.mapbox.map('map', mapStyle).setView([54.0498942, -2.8055977], 15)
+        $scope.map = map;
+        $scope.featureLayer = L.mapbox.featureLayer().addTo($scope.map);
+        // Stop the side bar from dragging when mousedown/tapdown on the map
+        L.DomEvent.addListener(document.getElementById('map'), 'mousedown', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        $scope.map = map;
+
+        // var controller = new Leap.Controller();
+
+        //            controller.connect();
+
+        //          controller.on('frame', onFrame);
+
+        //        $scope.hand = {'new': [0, 0]};
+        function onFrame(frame) {
+
+            //look at change in hand position
+
+            if (frame.hands.length == 1) {
+                $scope.hand.old = $scope.hand.new;
+
+                $scope.hand.new = frame.hands[0];
+
+                console.log(map);
+
+                $scope.map.setView([
+                        map.getCenter()[0] - ($scope.hand.new.palmPosition[0] - $scope.hand.old.palmPosition[0]),
+                        map.getCenter()[1] - ($scope.hand.new.palmPosition[1] - $scope.hand.old.palmPosition[1])
+                    ],
+                    9);
             }
-/*
-            navigator.geolocation.getCurrentPosition(function(pos) {
-               // $scope.map.setView([pos.coords.latitude, pos.coords.longitude], 9);
-                //alert(pos.coords.latitude);
-                //alert(pos.coords.longitude);
+        }
+       
+        setInterval(function() {
+            // method to be executed;
+            $scope.nearMe()
+        }, 1500);
+        HSSearch.init();
+    }
 
-                for(i=0;i<$scope.events.length;i++){
-                   
-                   //if()
 
-                    var placeLat = parseFloat($scope.geo.features[i].geometry.coordinates[1].toFixed(5)) // lat
-                    var placeLong = parseFloat($scope.geo.features[i].geometry.coordinates[0].toFixed(5)) // long
-                    
-                    var myLat = parseFloat(pos.coords.latitude.toFixed(5))
-                    var myLong = parseFloat(pos.coords.longitude.toFixed(5))
-                    console.log('my long-'+pos.coords.latitude)
-                    console.log('my lat-'+pos.coords.longitude)
-                    console.log('place long-'+placeLat)
-                    console.log('place lat-'+placeLong)
+    $scope.nearMe = function() {
+        if (!$scope.map) {
+            return;
+        }
+        /*
+                    navigator.geolocation.getCurrentPosition(function(pos) {
+                       // $scope.map.setView([pos.coords.latitude, pos.coords.longitude], 9);
+                        //alert(pos.coords.latitude);
+                        //alert(pos.coords.longitude);
 
-                    //console.log(placeLong + "-" + myLong)
-                    console.log(Math.abs(placeLong-myLong).toFixed(3))
-                    if(Math.abs(placeLong-myLong)<=1.0001 && Math.abs(placeLat-myLat)<=1.0001 ){
+                        for(i=0;i<$scope.events.length;i++){
+                           
+                           //if()
+
+                            var placeLat = parseFloat($scope.geo.features[i].geometry.coordinates[1].toFixed(5)) // lat
+                            var placeLong = parseFloat($scope.geo.features[i].geometry.coordinates[0].toFixed(5)) // long
+                            
+                            var myLat = parseFloat(pos.coords.latitude.toFixed(5))
+                            var myLong = parseFloat(pos.coords.longitude.toFixed(5))
+                            console.log('my long-'+pos.coords.latitude)
+                            console.log('my lat-'+pos.coords.longitude)
+                            console.log('place long-'+placeLat)
+                            console.log('place lat-'+placeLong)
+
+                            //console.log(placeLong + "-" + myLong)
+                            console.log(Math.abs(placeLong-myLong).toFixed(3))
+                            if(Math.abs(placeLong-myLong)<=1.0001 && Math.abs(placeLat-myLat)<=1.0001 ){
+
+                                    
+                                  //  sweetAlert("Good Job!", "Found "+ $scope.geo.features[i].properties.title +"!", "success");
+                                    $scope.whereubin.push($scope.geo.features[i].properties.title);
+                                    $scope.$apply();
+                                    console.log($scope.whereubin)
+                                    $http.get('https://hacklancaster.herokuapp.com/nearby/'+$scope.geo.features[i].id)
+                            }
 
                             
-                          //  sweetAlert("Good Job!", "Found "+ $scope.geo.features[i].properties.title +"!", "success");
-                            $scope.whereubin.push($scope.geo.features[i].properties.title);
-                            $scope.$apply();
-                            console.log($scope.whereubin)
-                            $http.get('https://hacklancaster.herokuapp.com/nearby/'+$scope.geo.features[i].id)
-                    }
 
-                    
+                        }
+                        
+                    }, function(error) {
+                        alert('Unable to get location: ' + error.message);
+                    });*/
+    };
 
-                }
-                
-            }, function(error) {
-                alert('Unable to get location: ' + error.message);
-            });*/
-        };
 
-        
 
-    });
+});
 
 var HSSearch = {
     lastParams: false,
@@ -300,7 +274,7 @@ var HSSearch = {
         "postal_code": 'zip'
     },
 
-    init: function () {
+    init: function() {
         this.placeInit();
         $(document).on("gotPosition", HSSearch.biasResults);
     },
@@ -316,8 +290,10 @@ var HSSearch = {
         // Create the autocomplete object, restricting the search
         // to geographical location types.
         HSSearch.autocomplete = new google.maps.places.Autocomplete(
-            /** @type {HTMLInputElement} */(document.getElementById('searchInput')),
-            { types: ['geocode'] });
+            /** @type {HTMLInputElement} */
+            (document.getElementById('searchInput')), {
+                types: ['geocode']
+            });
         // When the user selects an address from the dropdown,
         // do search
         google.maps.event.addListener(HSSearch.autocomplete, 'place_changed', function() {
@@ -341,7 +317,7 @@ var HSSearch = {
             if (HSSearch.labelConversion[addressType]) {
                 var lbl = HSSearch.labelConversion[addressType];
                 params[lbl] = place.address_components[i][HSSearch.componentForm[addressType]];
-                if(addressType == "country" && params[lbl] != "United States") {
+                if (addressType == "country" && params[lbl] != "United States") {
                     $("#stormSearchInput").val("");
                     alert("Only US Locations are supported at this time.");
                     return;
@@ -356,14 +332,11 @@ var HSSearch = {
 var mapStyle = {
     "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>Terms & Feedback</a>",
     "autoscale": true,
-    "bounds": [
-        -180,
-        -85.0511,
+    "bounds": [-180, -85.0511,
         180,
         85.0511
     ],
-    "center": [
-        -77.03643321990967,
+    "center": [-77.03643321990967,
         38.89546690844457,
         16
     ],
