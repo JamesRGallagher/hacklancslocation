@@ -109,6 +109,17 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
     })
 
     .controller('MapCtrl', function($scope, $ionicLoading,$rootScope,$location,$http) {
+         $scope.updateMap =function (period){
+
+                $http.get('https://hacklancaster.herokuapp.com/catogories/' + period).success(function(geo) {
+                    $scope.featureLayer.clearLayers();
+                    console.log(geo)
+                    console.log($scope.featureLayer)
+                    $scope.featureLayer.setGeoJSON(geo);
+
+
+                });
+            }
         
         $scope.whereubin = [];
 
@@ -126,17 +137,20 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
             }
         }];*/
 
-        $scope.initializeMap =  function() {
+        $scope.initializeMap =  function(period) {
+            //alert('init')
+            console.log(period)
        //    sweetAlert("Good Job!", "You startted the app!", "Success");
 
-            $http.get('https://hacklancaster.herokuapp.com/catogories/' + $location.search().period).success(function(geo) {
+            $http.get('https://hacklancaster.herokuapp.com/catogories/' + period).success(function(geo) {
 
                 $scope.geo = geo;
                 var map = L.mapbox.map('map', mapStyle).setView([54.0498942, -2.8055977], 15)
+                $scope.map = map;
                 
                 console.log(geo);
 
-                var featureLayer = L.mapbox.featureLayer()
+                 $scope.featureLayer = L.mapbox.featureLayer()
                     .addTo(map);
 
                 featureLayer.on('layeradd', function(e) {
@@ -163,7 +177,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
             });
 
 
-            });
+           });
             // Stop the side bar from dragging when mousedown/tapdown on the map
             L.DomEvent.addListener(document.getElementById('map'), 'mousedown', function(e) {
                 e.preventDefault();
@@ -172,13 +186,15 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
 
             $scope.map = map;
 
-            var controller = new Leap.Controller();
+           // var controller = new Leap.Controller();
 
-            controller.connect();
+//            controller.connect();
 
-            controller.on('frame', onFrame);
+  //          controller.on('frame', onFrame);
 
-            $scope.hand = {'new': [0, 0]};
+    //        $scope.hand = {'new': [0, 0]};
+
+
 
             function onFrame(frame)
             {
@@ -215,7 +231,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
             if(!$scope.map) {
                 return;
             }
-
+/*
             navigator.geolocation.getCurrentPosition(function(pos) {
                // $scope.map.setView([pos.coords.latitude, pos.coords.longitude], 9);
                 //alert(pos.coords.latitude);
@@ -240,7 +256,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
                     if(Math.abs(placeLong-myLong)<=1.0001 && Math.abs(placeLat-myLat)<=1.0001 ){
 
                             
-                            sweetAlert("Good Job!", "Found "+ $scope.geo.features[i].properties.title +"!", "success");
+                          //  sweetAlert("Good Job!", "Found "+ $scope.geo.features[i].properties.title +"!", "success");
                             $scope.whereubin.push($scope.geo.features[i].properties.title);
                             $scope.$apply();
                             console.log($scope.whereubin)
@@ -253,7 +269,7 @@ angular.module('hs.mapbox', ['ionic','ionic.service.platform', 'ionic.ui.content
                 
             }, function(error) {
                 alert('Unable to get location: ' + error.message);
-            });
+            });*/
         };
 
         
